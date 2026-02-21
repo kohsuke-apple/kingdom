@@ -89,7 +89,7 @@ export default async function DashboardPage() {
           <div className="px-5 py-4 border-b border-border">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Cake className="h-4 w-4 text-muted-foreground" />
-              今月の誕生日
+              誕生日
             </h3>
           </div>
           <div className="p-5">
