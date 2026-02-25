@@ -2,6 +2,26 @@
 
 ## ローカル開発
 
+### 0. Supabase 認証認可基盤を適用（初回のみ）
+
+Supabase SQL Editor で以下を順に実行：
+
+1. `supabase/ca_ra_dual_mode.sql`
+2. `supabase/company_settings.sql`
+3. `supabase/auth_foundation.sql`
+
+`auth_foundation.sql` 適用後、`auth.users` の UUID と対応する `public.user_profiles` を作成してください。
+
+例:
+
+```sql
+insert into public.user_profiles (user_id, role, company_id)
+values ('<auth-user-uuid>', 'employer', '<company-id>');
+
+insert into public.user_profiles (user_id, role)
+values ('<auth-user-uuid>', 'master');
+```
+
 ### 1. 環境変数の設定
 
 ```bash
