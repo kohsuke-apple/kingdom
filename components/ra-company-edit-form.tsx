@@ -20,6 +20,71 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
+import { MultiSelectCheckboxes } from '@/components/ui/multi-select-checkboxes'
+import type { MultiSelectOption } from '@/components/ui/multi-select-checkboxes'
+
+const INDUSTRY_OPTIONS: MultiSelectOption[] = [
+  { value: 'メーカー', label: 'メーカー' },
+  { value: 'サービス・インフラ', label: 'サービス・インフラ' },
+  { value: '商社', label: '商社' },
+  { value: 'ソフトウェア', label: 'ソフトウェア' },
+  { value: '小売り', label: '小売り' },
+  { value: '広告・出版・マスコミ', label: '広告・出版・マスコミ' },
+  { value: '金融', label: '金融' },
+  { value: '官公庁・公社・団体', label: '官公庁・公社・団体' },
+]
+
+const SUB_INDUSTRY_OPTIONS: MultiSelectOption[] = [
+  // メーカー
+  { value: '食品・農林・水産', label: '食品・農林・水産', group: 'メーカー' },
+  { value: '建設・住宅・インテリア', label: '建設・住宅・インテリア', group: 'メーカー' },
+  { value: '繊維・化学・薬品・化粧品', label: '繊維・化学・薬品・化粧品', group: 'メーカー' },
+  { value: '鉄鋼・金属・鉱業', label: '鉄鋼・金属・鉱業', group: 'メーカー' },
+  { value: '機械・プラント', label: '機械・プラント', group: 'メーカー' },
+  { value: '電子・電気機器', label: '電子・電気機器', group: 'メーカー' },
+  { value: '自動車・輸送用機器', label: '自動車・輸送用機器', group: 'メーカー' },
+  { value: '精密・医療機器', label: '精密・医療機器', group: 'メーカー' },
+  { value: '印刷・事務機器関連', label: '印刷・事務機器関連', group: 'メーカー' },
+  { value: 'スポーツ・玩具', label: 'スポーツ・玩具', group: 'メーカー' },
+  { value: 'その他メーカー', label: 'その他メーカー', group: 'メーカー' },
+  // サービス・インフラ
+  { value: '不動産', label: '不動産', group: 'サービス・インフラ' },
+  { value: '鉄道・航空・運輸・物流', label: '鉄道・航空・運輸・物流', group: 'サービス・インフラ' },
+  { value: '電力・ガス・エネルギー', label: '電力・ガス・エネルギー', group: 'サービス・インフラ' },
+  { value: 'フードサービス', label: 'フードサービス', group: 'サービス・インフラ' },
+  { value: 'ホテル・旅行', label: 'ホテル・旅行', group: 'サービス・インフラ' },
+  { value: '医療・福祉', label: '医療・福祉', group: 'サービス・インフラ' },
+  { value: 'アミューズメント・レジャー', label: 'アミューズメント・レジャー', group: 'サービス・インフラ' },
+  { value: 'その他サービス', label: 'その他サービス', group: 'サービス・インフラ' },
+  { value: 'コンサルティング・調査', label: 'コンサルティング・調査', group: 'サービス・インフラ' },
+  { value: '人材サービス', label: '人材サービス', group: 'サービス・インフラ' },
+  { value: '教育', label: '教育', group: 'サービス・インフラ' },
+  // 商社
+  { value: '総合商社', label: '総合商社', group: '商社' },
+  { value: '専門商社', label: '専門商社', group: '商社' },
+  // ソフトウェア
+  { value: 'ソフトウェア', label: 'ソフトウェア', group: 'ソフトウェア' },
+  { value: 'インターネット', label: 'インターネット', group: 'ソフトウェア' },
+  { value: '通信', label: '通信', group: 'ソフトウェア' },
+  // 小売り
+  { value: '百貨店・スーパー', label: '百貨店・スーパー', group: '小売り' },
+  { value: 'コンビニ', label: 'コンビニ', group: '小売り' },
+  { value: '専門店', label: '専門店', group: '小売り' },
+  // 広告・出版・マスコミ
+  { value: '放送', label: '放送', group: '広告・出版・マスコミ' },
+  { value: '新聞', label: '新聞', group: '広告・出版・マスコミ' },
+  { value: '出版', label: '出版', group: '広告・出版・マスコミ' },
+  { value: '広告', label: '広告', group: '広告・出版・マスコミ' },
+  // 金融
+  { value: '銀行・証券', label: '銀行・証券', group: '金融' },
+  { value: 'クレジット', label: 'クレジット', group: '金融' },
+  { value: '信販・リース', label: '信販・リース', group: '金融' },
+  { value: 'その他金融', label: 'その他金融', group: '金融' },
+  { value: '生保・損保', label: '生保・損保', group: '金融' },
+  // 官公庁・公社・団体
+  { value: '公社・団体', label: '公社・団体', group: '官公庁・公社・団体' },
+  { value: '官公庁', label: '官公庁', group: '官公庁・公社・団体' },
+]
 
 type Props = {
   company: Company
@@ -77,9 +142,10 @@ export function RaCompanyEditForm({ company, jobs, selections, candidates, commu
 
   // 基本情報
   const [companyNumber, setCompanyNumber] = useState(company.companyNumber ?? '')
-  const [publishStatus, setPublishStatus] = useState<PublishStatus>(company.publishStatus ?? 'published')
+  const [publishStatus, setPublishStatus] = useState<PublishStatus>(company.publishStatus ?? 'private')
   const [name, setName] = useState(company.name)
-  const [industry, setIndustry] = useState(company.industry ?? '')
+  const [industries, setIndustries] = useState<string[]>(company.industries ?? [])
+  const [subIndustries, setSubIndustries] = useState<string[]>(company.subIndustries ?? [])
   const [officialWebsite, setOfficialWebsite] = useState(company.officialWebsite ?? '')
 
   // 募集情報
@@ -121,7 +187,8 @@ export function RaCompanyEditForm({ company, jobs, selections, candidates, commu
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name: name.trim(),
-        industry: industry || undefined,
+        industries: industries.length > 0 ? industries : [],
+        subIndustries: subIndustries.length > 0 ? subIndustries : [],
         officialWebsite: officialWebsite || undefined,
         companyNumber: companyNumber || undefined,
         publishStatus,
@@ -251,30 +318,43 @@ export function RaCompanyEditForm({ company, jobs, selections, candidates, commu
                     value={publishStatus}
                     onChange={e => setPublishStatus(e.target.value as PublishStatus)}
                   >
-                    <option value="published">公開</option>
-                    <option value="suspended">一時停止</option>
+                    <option value="private">非公開</option>
+                    <option value="ra_only">RA公開</option>
+                    <option value="ca_ra">CA・RA公開</option>
+                    <option value="published">外部公開</option>
                   </select>
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="name">企業名 *</Label>
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="industry">業界</Label>
-                  <Input
-                    id="industry"
-                    value={industry}
-                    onChange={e => setIndustry(e.target.value)}
-                  />
-                </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="name">企業名 *</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>業界</Label>
+                <MultiSelectCheckboxes
+                  options={INDUSTRY_OPTIONS}
+                  value={industries}
+                  onChange={setIndustries}
+                  placeholder="業界を選択（複数可）"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>業種</Label>
+                <MultiSelectCheckboxes
+                  options={SUB_INDUSTRY_OPTIONS}
+                  value={subIndustries}
+                  onChange={setSubIndustries}
+                  placeholder="業種を選択（複数可）"
+                  showGroups
+                />
               </div>
 
               <div className="space-y-1.5">

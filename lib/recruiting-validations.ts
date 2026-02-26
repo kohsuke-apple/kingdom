@@ -15,7 +15,9 @@ export const companySchema = z.object({
   createdBy: z.string().uuid().optional(),
   // RA管理フィールド
   companyNumber: optionalString(50),
-  publishStatus: z.enum(['published', 'suspended']).optional(),
+  publishStatus: z.enum(['private', 'ra_only', 'ca_ra', 'published']).optional(),
+  industries: z.array(z.string()).optional(),
+  subIndustries: z.array(z.string()).optional(),
   recruitingJobTypes: optionalString(500),
   hiringType: z.enum(['new_grad', 'mid_career', 'both']).optional(),
   successFee: optionalString(200),

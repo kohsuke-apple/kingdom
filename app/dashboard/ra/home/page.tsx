@@ -1,5 +1,5 @@
-import { DashboardPlaceholder } from '@/components/dashboard-placeholder'
+import { RaHome } from '@/components/ra-home'
 
 export default function RaHomePage() {
-  return <DashboardPlaceholder title="RA Home" description="RAモードのホーム画面" />
+  return <RaHome />
 }

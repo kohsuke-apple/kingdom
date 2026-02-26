@@ -40,6 +40,8 @@ type CompanyRow = {
   // RA管理フィールド
   company_number: string | null
   publish_status: string | null
+  industries: string[] | null
+  sub_industries: string[] | null
   recruiting_job_types: string | null
   hiring_type: string | null
   success_fee: string | null
@@ -125,6 +127,7 @@ type JobRow = {
   source_agency_name: string | null
   source_agency_address: string | null
   source_agency_license_no: string | null
+  thumbnail_url: string | null
 }
 
 type CandidateRow = {
@@ -238,6 +241,8 @@ const toCompany = (row: CompanyRow): Company => ({
   updatedAt: row.updated_at,
   companyNumber: row.company_number ?? undefined,
   publishStatus: (row.publish_status as Company['publishStatus']) ?? undefined,
+  industries: row.industries ?? undefined,
+  subIndustries: row.sub_industries ?? undefined,
   recruitingJobTypes: row.recruiting_job_types ?? undefined,
   hiringType: (row.hiring_type as Company['hiringType']) ?? undefined,
   successFee: row.success_fee ?? undefined,
@@ -322,6 +327,7 @@ const toJob = (row: JobRow): Job => ({
   sourceAgencyName: row.source_agency_name ?? undefined,
   sourceAgencyAddress: row.source_agency_address ?? undefined,
   sourceAgencyLicenseNo: row.source_agency_license_no ?? undefined,
+  thumbnailUrl: row.thumbnail_url ?? undefined,
 })
 
 const toCandidate = (row: CandidateRow): Candidate => ({
@@ -465,6 +471,8 @@ export const recruitingRepository = {
     if (input.isMyCompany !== undefined) payload.is_my_company = input.isMyCompany
     if (input.companyNumber !== undefined) payload.company_number = input.companyNumber ?? null
     if (input.publishStatus !== undefined) payload.publish_status = input.publishStatus ?? null
+    if (input.industries !== undefined) payload.industries = input.industries ?? null
+    if (input.subIndustries !== undefined) payload.sub_industries = input.subIndustries ?? null
     if (input.recruitingJobTypes !== undefined) payload.recruiting_job_types = input.recruitingJobTypes ?? null
     if (input.hiringType !== undefined) payload.hiring_type = input.hiringType ?? null
     if (input.successFee !== undefined) payload.success_fee = input.successFee ?? null
@@ -607,6 +615,7 @@ export const recruitingRepository = {
       description: input.description ?? null,
       source_mode: input.sourceMode ?? null,
       created_by: input.createdBy ?? null,
+      thumbnail_url: input.thumbnailUrl ?? null,
     }
     const { data, error } = await supabase.from('jobs').insert(payload).select().single()
     if (error) {
@@ -681,6 +690,7 @@ export const recruitingRepository = {
     if (input.sourceAgencyName !== undefined) payload.source_agency_name = input.sourceAgencyName ?? null
     if (input.sourceAgencyAddress !== undefined) payload.source_agency_address = input.sourceAgencyAddress ?? null
     if (input.sourceAgencyLicenseNo !== undefined) payload.source_agency_license_no = input.sourceAgencyLicenseNo ?? null
+    if (input.thumbnailUrl !== undefined) payload.thumbnail_url = input.thumbnailUrl ?? null
 
     const { data, error } = await supabase.from('jobs').update(payload).eq('id', id).select().maybeSingle()
     if (error) {

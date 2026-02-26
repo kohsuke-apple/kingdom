@@ -1,5 +1,5 @@
-import { DashboardPlaceholder } from '@/components/dashboard-placeholder'
+import { CaHome } from '@/components/ca-home'
 
 export default function CaHomePage() {
-  return <DashboardPlaceholder title="CA Home" description="CAモードのホーム画面" />
+  return <CaHome />
 }

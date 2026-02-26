@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from 'react'
-import { Plus, Search, X, Pencil, Trash2 } from 'lucide-react'
+import { Search, X, Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Company, Job, Candidate, CandidateJobStatus, SelectionStage } from '@/types/recruiting'
 import { Button } from '@/components/ui/button'
@@ -108,17 +108,7 @@ export default function CaSelectionsManager({ initialSelections, companies, jobs
     return result
   }, [items])
 
-  // ── モーダル ─────────────────────────────────────────────────────────
-  function openNew() {
-    setForm({
-      candidateId: candidates[0]?.id,
-      jobId: jobs[0]?.id,
-      stage: 'applied',
-      memo: '',
-    })
-    setModalOpen(true)
-  }
-
+  // ── フォーマット: 編集のみ（新規作成はCAの求人画面から行う）
   function openEdit(item: CandidateJobStatus) {
     setForm({ id: item.id, candidateId: item.candidateId, jobId: item.jobId, stage: item.stage, memo: item.memo ?? '' })
     setModalOpen(true)
@@ -136,9 +126,14 @@ export default function CaSelectionsManager({ initialSelections, companies, jobs
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
+    if (!form.id) {
+      toast.error('編集対象が不明です')
+      setSaving(false)
+      return
+    }
     const payload = { jobId: form.jobId, candidateId: form.candidateId, stage: form.stage, memo: form.memo }
-    const method = form.id ? 'PUT' : 'POST'
-    const url = form.id ? `/api/selections?scope=ca&id=${form.id}` : '/api/selections?scope=ca'
+    const method = 'PUT'
+    const url = `/api/selections?scope=ca&id=${form.id}`
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     if (!res.ok) {
       toast.error((await res.json().catch(() => ({}))).error ?? '保存に失敗しました')
@@ -241,10 +236,7 @@ export default function CaSelectionsManager({ initialSelections, companies, jobs
         </div>
 
         {/* ツールバー */}
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <Button className="h-10 gap-2 px-5" onClick={openNew}>
-            <Plus className="h-4 w-4" /> 新規追加
-          </Button>
+            <div className="mb-4 flex items-center justify-between gap-4">
           <div className="relative w-72">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input

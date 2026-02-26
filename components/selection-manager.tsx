@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from 'react'
-import { Plus, Search, X, Ellipsis } from 'lucide-react'
+import { Search, X, Ellipsis } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Company, Job, Candidate, CompanyCandidateSelection, CandidateJobStatus, SelectionStage, SelectionStatus } from '@/types/recruiting'
 import { Button } from '@/components/ui/button'
@@ -43,12 +43,6 @@ export default function SelectionManager({
   const jobMap = useMemo(() => new Map(jobs.map(j => [j.id, j.title])), [jobs])
   const candidateMap = useMemo(() => new Map(candidates.map(c => [c.id, c.name])), [candidates])
 
-  function openNew() {
-    setForm({ companyId: companies[0]?.id, jobId: jobs[0]?.id, candidateId: candidates[0]?.id, stage: 'applied', status: 'active', memo: '' })
-    setFormKey(k => k + 1)
-    setModalOpen(true)
-  }
-
   function openEdit(item: SelectionUnion) {
     setForm({ id: item.id, companyId: 'companyId' in item ? item.companyId : undefined, jobId: item.jobId, candidateId: item.candidateId, stage: item.stage, status: 'status' in item ? item.status : undefined, memo: 'memo' in item ? item.memo : undefined })
     setFormKey(k => k + 1)
@@ -68,6 +62,11 @@ export default function SelectionManager({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
+    if (!form.id) {
+      toast.error('編集対象が不明です')
+      setSaving(false)
+      return
+    }
     const payload: Record<string, unknown> = {
       jobId: form.jobId,
       candidateId: form.candidateId,
@@ -80,8 +79,8 @@ export default function SelectionManager({
       payload.memo = form.memo
     }
 
-    const method = form.id ? 'PUT' : 'POST'
-    const url = form.id ? `/api/selections?scope=${scope}&id=${form.id}` : `/api/selections?scope=${scope}`
+    const method = 'PUT'
+    const url = `/api/selections?scope=${scope}&id=${form.id}`
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     if (!res.ok) {
       toast.error((await res.json().catch(() => ({}))).error ?? '保存に失敗しました')
@@ -119,7 +118,7 @@ export default function SelectionManager({
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/30 pt-16 pb-8">
           <div className="w-full max-w-lg rounded-lg border border-border bg-white shadow-xl">
             <div className="flex items-center justify-between border-b px-6 py-4">
-              <h2 className="text-base font-semibold">{form.id ? '選考を編集' : '選考を追加'}</h2>
+              <h2 className="text-base font-semibold">選考を編集</h2>
               <button type="button" onClick={() => setModalOpen(false)} className="rounded p-1 hover:bg-muted"><X className="h-4 w-4" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4 px-6 py-5">
@@ -168,7 +167,7 @@ export default function SelectionManager({
               )}
 
               <div className="flex gap-2">
-                <Button type="submit" disabled={saving}>{saving ? '保存中...' : form.id ? '更新する' : '追加する'}</Button>
+                <Button type="submit" disabled={saving}>{saving ? '保存中...' : '更新する'}</Button>
                 <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>キャンセル</Button>
               </div>
             </form>
@@ -181,9 +180,7 @@ export default function SelectionManager({
           <h1 className="text-2xl font-bold tracking-tight text-foreground">選考管理</h1>
         </div>
 
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <Button className="h-12 gap-2 px-6 text-base" onClick={openNew}><Plus className="h-5 w-5" /> 新規追加</Button>
-        </div>
+        <div className="mb-4 flex items-start justify-between gap-4" />
 
         <div className="mb-4 flex items-center gap-3">
           <div className="relative flex-1">

@@ -67,6 +67,8 @@ export async function PUT(request: NextRequest) {
       employeeIntroduction: parsed.data.employeeIntroduction || undefined,
       companyNumber: parsed.data.companyNumber || undefined,
       publishStatus: parsed.data.publishStatus,
+      industries: parsed.data.industries,
+      subIndustries: parsed.data.subIndustries,
       recruitingJobTypes: parsed.data.recruitingJobTypes || undefined,
       hiringType: parsed.data.hiringType,
       successFee: parsed.data.successFee || undefined,

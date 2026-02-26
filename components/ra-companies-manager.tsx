@@ -223,14 +223,24 @@ export function RaCompaniesManager({ initialCompanies }: { initialCompanies: Com
                   </Link>
                 </td>
                 <td className="px-4 py-4 align-top">
-                  {company.publishStatus === 'suspended' ? (
-                    <Badge variant="secondary" className="bg-yellow-50 text-yellow-700 border border-yellow-200">一時停止</Badge>
+                  {company.publishStatus === 'published' ? (
+                    <Badge variant="secondary" className="bg-green-50 text-green-700 border border-green-200">外部公開</Badge>
+                  ) : company.publishStatus === 'ca_ra' ? (
+                    <Badge variant="secondary" className="bg-blue-50 text-blue-700 border border-blue-200">CA・RA公開</Badge>
+                  ) : company.publishStatus === 'ra_only' ? (
+                    <Badge variant="secondary" className="bg-yellow-50 text-yellow-700 border border-yellow-200">RA公開</Badge>
                   ) : (
-                    <Badge variant="secondary" className="bg-green-50 text-green-700 border border-green-200">公開</Badge>
+                    <Badge variant="secondary" className="bg-muted text-muted-foreground">非公開</Badge>
                   )}
                 </td>
                 <td className="px-4 py-4 align-top">
-                  {company.industry ? (
+                  {company.industries && company.industries.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {company.industries.map(ind => (
+                        <Badge key={ind} variant="secondary">{ind}</Badge>
+                      ))}
+                    </div>
+                  ) : company.industry ? (
                     <Badge variant="secondary">{company.industry}</Badge>
                   ) : (
                     <span className="text-muted-foreground/50">-</span>

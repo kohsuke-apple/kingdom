@@ -2,7 +2,7 @@ export type UserRole = 'CA' | 'RA'
 export type AgentRoleType = 'CA' | 'RA' | 'both'
 export type JobStatus = 'open' | 'closed'
 export type TaskStatus = 'todo' | 'doing' | 'done'
-export type PublishStatus = 'published' | 'suspended'
+export type PublishStatus = 'private' | 'ra_only' | 'ca_ra' | 'published'
 export type HiringType = 'new_grad' | 'mid_career' | 'both'
 export type RecruitingStatus = 'active' | 'fulfilled'
 export type HiringDifficulty = 'A' | 'B' | 'C' | 'D'
@@ -23,6 +23,8 @@ export interface Company {
   id: string
   name: string
   industry?: string
+  industries?: string[]
+  subIndustries?: string[]
   location?: string
   memo?: string
   officialWebsite?: string
@@ -119,6 +121,7 @@ export interface Job {
   sourceAgencyName?: string
   sourceAgencyAddress?: string
   sourceAgencyLicenseNo?: string
+  thumbnailUrl?: string
 }
 
 export interface WorkHistory {

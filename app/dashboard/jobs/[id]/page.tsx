@@ -2,6 +2,8 @@ import { recruitingRepository } from '@/lib/recruiting-repository'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
+import { JobThumbnailEditor } from '@/components/job-thumbnail-editor'
+import { JobCandidateSelectorTrigger } from '@/components/job-candidate-selector-trigger'
 import type { SelectionStage, SelectionStatus } from '@/types/recruiting'
 
 function formatDate(date: string) {
@@ -31,8 +33,8 @@ const statusLabelMap: Record<SelectionStatus, string> = {
   hired: '内定/入社',
 }
 
-export default async function JobDetailPage({ params }: { params: { id: string } }) {
-  const id = params.id
+export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
+  const { id } = await params
   if (!id) return notFound()
 
   let job
@@ -127,9 +129,12 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           {/* 応募中の求職者一覧 */}
           <section>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-base font-semibold">応募中の求職者</h2>
-              <span className="text-sm text-muted-foreground">{selections.length} 件</span>
-            </div>
+                <h2 className="text-base font-semibold">応募中の求職者</h2>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-muted-foreground">{selections.length} 件</span>
+                  <JobCandidateSelectorTrigger jobId={id} companyId={company?.id} />
+                </div>
+              </div>
             <div className="rounded-lg border bg-white overflow-hidden">
               <table className="w-full border-collapse text-sm">
                 <thead>
@@ -187,9 +192,17 @@ export default async function JobDetailPage({ params }: { params: { id: string }
           </section>
         </div>
 
-        {/* 右: 会社情報カード */}
-        {company && (
+        {/* 右: サムネイル + 会社情報カード */}
+        <div className="space-y-6">
+          {/* サムネイル */}
           <div>
+            <h2 className="mb-3 text-base font-semibold">サムネイル画像</h2>
+            <JobThumbnailEditor jobId={id} initialUrl={job.thumbnailUrl} />
+          </div>
+
+          {/* 会社情報カード */}
+          {company && (
+            <div>
             <h2 className="mb-4 text-base font-semibold">企業情報</h2>
             <div className="rounded-lg border bg-white p-5 space-y-3">
               <div>
@@ -226,7 +239,8 @@ export default async function JobDetailPage({ params }: { params: { id: string }
               )}
             </div>
           </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )

@@ -1,6 +1,9 @@
-'use client'
+ 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { LayoutGrid, List, UserPlus } from 'lucide-react'
+import { CandidateSelector } from './candidate-selector'
+import { useMode } from './mode-context'
 import type { Company, Job, SavedJob } from '@/types/recruiting'
 import Link from 'next/link'
 import { Bookmark, X, Plus } from 'lucide-react'
@@ -162,10 +165,57 @@ export function JobsReadonlyTable({
 }) {
   const companyMap = new Map(companies.map(company => [company.id, company.name]))
   const [savedJobs, setSavedJobs] = useState<SavedJob[]>(initialSavedJobs)
+  const [viewMode, setViewMode] = useState<'list' | 'gallery'>('list')
+  const [openSelector, setOpenSelector] = useState(false)
+  const [selectorJob, setSelectorJob] = useState<{ jobId: string; companyId: string } | null>(null)
+  const { mode } = useMode()
 
   return (
-    <div className="overflow-x-auto rounded-md border bg-white">
-      <table className="w-full border-collapse text-sm">
+    <div>
+      <div className="mb-3 flex items-center justify-end gap-2">
+        <button
+          type="button"
+          onClick={() => setViewMode('list')}
+          className={`rounded p-2 ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+          title="リスト表示"
+        >
+          <List className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => setViewMode('gallery')}
+          className={`rounded p-2 ${viewMode === 'gallery' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+          title="ギャラリー表示"
+        >
+          <LayoutGrid className="h-4 w-4" />
+        </button>
+      </div>
+      {viewMode === 'gallery' ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {jobs.map(job => (
+            <div key={job.id} className="rounded-lg border bg-white p-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="font-semibold">{job.title}</div>
+                  <div className="text-xs text-muted-foreground">{companyMap.get(job.companyId) ?? '-'}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button type="button" className="rounded p-1 hover:bg-muted" title="保存">
+                    <Bookmark className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                  {mode === 'CA' && (
+                    <button type="button" className="rounded p-1 hover:bg-muted" title="求職者を選択" onClick={() => { setSelectorJob({ jobId: job.id, companyId: job.companyId }); setOpenSelector(true) }}>
+                      <UserPlus className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-md border bg-white">
+          <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b bg-muted/30 text-left text-muted-foreground">
             <th className="px-4 py-3">会社</th>
@@ -204,6 +254,17 @@ export function JobsReadonlyTable({
           )}
         </tbody>
       </table>
+        </div>
+      )}
+
+      {openSelector && selectorJob && (
+        <CandidateSelector
+          jobId={selectorJob.jobId}
+          companyId={selectorJob.companyId}
+          onClose={() => { setOpenSelector(false); setSelectorJob(null) }}
+          onApplied={() => { /* no-op: consumer page will refresh if needed */ }}
+        />
+      )}
     </div>
   )
 }
