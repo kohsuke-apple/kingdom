@@ -11,7 +11,7 @@ export default async function CaSavedPage() {
   ])
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="mx-auto max-w-6xl p-4 md:p-8">
       <div className="mb-6 border-b border-border pb-5">
         <h1 className="text-2xl font-bold tracking-tight">保存した求人</h1>
         <p className="mt-1 text-sm text-muted-foreground">カテゴリ別に管理されたブックマーク求人の一覧です。</p>

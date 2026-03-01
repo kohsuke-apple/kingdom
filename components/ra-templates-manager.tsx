@@ -133,12 +133,12 @@ export default function RaTemplatesManager({ initialTemplates }: { initialTempla
         <TemplateFormModal form={form} saving={saving} formKey={formKey} onClose={() => setModalOpen(false)} onSubmit={handleSubmit} onChange={handleChange} />
       )}
 
-      <div className="mx-auto max-w-6xl p-8">
+      <div className="mx-auto max-w-6xl p-4 md:p-8">
         <div className="mb-6 border-b border-border pb-5">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">RAテンプレート</h1>
         </div>
 
-        <div className="mb-4 flex items-start justify-between gap-4">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
           <Button className="h-12 gap-2 px-6 text-base" onClick={openNew}>
             <Plus className="h-5 w-5" />
             新しいテンプレート

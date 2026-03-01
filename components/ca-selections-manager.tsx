@@ -230,7 +230,7 @@ export default function CaSelectionsManager({ initialSelections, companies, jobs
       )}
 
       {/* ─── メインコンテンツ ─────────────────────────────────────── */}
-      <div className="mx-auto max-w-6xl p-8">
+      <div className="mx-auto max-w-6xl p-4 md:p-8">
         <div className="mb-6 border-b border-border pb-5">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">進捗管理</h1>
         </div>

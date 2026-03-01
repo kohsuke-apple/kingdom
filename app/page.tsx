@@ -31,7 +31,7 @@ export default async function HomePage() {
   const peopleCount = await personRepository.count()
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="mx-auto max-w-6xl p-4 md:p-8">
       <div className="mb-8 border-b border-border pb-6">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">全体管理</h1>
         <p className="mt-1 text-sm text-muted-foreground">CA/RAの業務全体をこの画面から管理します。</p>

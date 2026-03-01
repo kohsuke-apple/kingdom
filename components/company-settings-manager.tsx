@@ -120,7 +120,7 @@ export function CompanySettingsManager({ companies, initialAgents }: Props) {
   }
 
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="mx-auto max-w-5xl p-4 md:p-8">
       <div className="mb-8 border-b border-border pb-6">
         <h1 className="text-2xl font-bold tracking-tight">会社設定</h1>
         <p className="mt-1 text-sm text-muted-foreground">自社情報と担当者（CA/RA）を管理します。</p>

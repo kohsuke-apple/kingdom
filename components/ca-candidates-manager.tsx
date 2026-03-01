@@ -68,12 +68,12 @@ export function CaCandidatesManager({
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="mx-auto max-w-6xl p-4 md:p-8">
       <div className="mb-6 border-b border-border pb-5">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">求職者一覧</h1>
       </div>
 
-      <div className="mb-4 flex items-start justify-between gap-4">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
         <Link href="/dashboard/ca/candidates/new">
           <Button className="h-12 gap-2 px-6 text-base">
             <Plus className="h-5 w-5" />

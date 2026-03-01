@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Plus, Search, SlidersHorizontal, Ellipsis, X, LayoutGrid, List, Building2, Briefcase, Banknote, Star, BookmarkPlus, ImagePlus, Loader2, UserPlus } from 'lucide-react'
 import { CandidateSelector } from './candidate-selector'
 import { toast } from 'sonner'
@@ -75,6 +76,7 @@ export function RaJobsManager({
   const [openSelector, setOpenSelector] = useState(false)
   const [selectorJob, setSelectorJob] = useState<{ jobId: string; companyId: string } | null>(null)
   const { mode } = useMode()
+  const router = useRouter()
 
   const companyNameMap = useMemo(() => {
     const map = new Map<string, string>()
@@ -199,9 +201,16 @@ export function RaJobsManager({
                 <select
                   className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm"
                   value={form.companyId}
-                  onChange={e => setField('companyId', e.target.value)}
+                  onChange={e => {
+                    if (e.target.value === '__add_company__') {
+                      router.push('/dashboard/ra/companies')
+                      return
+                    }
+                    setField('companyId', e.target.value)
+                  }}
                   required
                 >
+                  <option value="__add_company__">＋ 会社を追加する</option>
                   {companies.map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -308,12 +317,12 @@ export function RaJobsManager({
         </div>
       )}
 
-      <div className="mx-auto max-w-6xl p-8">
+      <div className="mx-auto max-w-6xl p-4 md:p-8">
         <div className="mb-6 border-b border-border pb-5">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">RA モード / 求人管理</h1>
         </div>
 
-        <div className="mb-4 flex items-start justify-between gap-4">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
           <Button className="h-12 gap-2 px-6 text-base" onClick={openNew}>
             <Plus className="h-5 w-5" />
             求人追加

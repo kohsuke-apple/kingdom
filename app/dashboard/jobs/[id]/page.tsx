@@ -55,7 +55,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   const candidateMap = new Map(allCandidates.map(c => [c.id, c]))
 
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="mx-auto max-w-5xl p-4 md:p-8">
       {/* ヘッダー */}
       <div className="mb-8 border-b border-border pb-6">
         <div className="flex items-start justify-between gap-4">

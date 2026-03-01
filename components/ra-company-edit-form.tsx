@@ -272,7 +272,7 @@ export function RaCompanyEditForm({ company, jobs, selections, candidates, commu
     company.businessDescription || company.transferCase || company.employeeIntroduction
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="mx-auto max-w-6xl p-4 md:p-8">
       <button
         type="button"
         onClick={() => router.back()}

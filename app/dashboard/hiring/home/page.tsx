@@ -7,7 +7,7 @@ export default async function HiringHomePage() {
   const jobs = await recruitingRepository.listJobs()
 
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="mx-auto max-w-5xl p-4 md:p-8">
       <div className="mb-8 border-b border-border pb-6">
         <h1 className="text-2xl font-bold tracking-tight">採用担当モード</h1>
         <p className="mt-1 text-sm text-muted-foreground">会社の採用担当者が求人を登録・更新するためのモードです。</p>

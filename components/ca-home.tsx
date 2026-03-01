@@ -53,7 +53,7 @@ const tiles = [
 
 export function CaHome() {
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="mx-auto max-w-5xl p-4 md:p-8">
       {/* ヘッダー */}
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">CA モード</p>

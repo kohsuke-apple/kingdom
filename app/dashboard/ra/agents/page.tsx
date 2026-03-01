@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 export default async function RaAgentsPage() {
   const agents = await recruitingRepository.listAgents()
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="mx-auto max-w-5xl p-4 md:p-8">
       <RaAgentsManager initialAgents={agents} />
     </div>
   )

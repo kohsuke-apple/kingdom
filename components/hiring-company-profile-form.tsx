@@ -58,7 +58,7 @@ export function HiringCompanyProfileForm({ companies }: { companies: Company[] }
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-8">
+    <div className="mx-auto max-w-4xl p-4 md:p-8">
       <div className="mb-8 border-b border-border pb-6">
         <h1 className="text-2xl font-bold tracking-tight">採用モード / 会社プロフィール設定</h1>
         <p className="mt-1 text-sm text-muted-foreground">公式HP・事業内容・転職事例・社員紹介を設定します。</p>

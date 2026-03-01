@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Building2, BriefcaseBusiness, ClipboardList, FileText, ListChecks, Settings, Users, UserCog, Bookmark } from 'lucide-react'
+import { LayoutDashboard, Building2, BriefcaseBusiness, ClipboardList, FileText, ListChecks, Settings, Users, UserCog, Bookmark, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useMode } from '@/components/mode-context'
 import { Button } from '@/components/ui/button'
@@ -52,7 +52,7 @@ const hiringNavItems = [
   { href: '/dashboard/hiring/company-profile', label: '会社プロフィール', icon: Building2 },
 ]
 
-export function Sidebar() {
+export function Sidebar({ mobileOpen = false, onClose }: { mobileOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname()
   const router = useRouter()
   const { mode, setMode } = useMode()
@@ -63,15 +63,32 @@ export function Sidebar() {
   function handleModeChange(nextMode: typeof mode) {
     setMode(nextMode)
     router.push(modeHomeMap[nextMode])
+    onClose?.()
   }
 
   return (
-    <aside className="w-56 border-r border-border bg-white flex-shrink-0 flex flex-col">
+    <aside className={cn(
+      'border-r border-border bg-white flex-shrink-0 flex flex-col z-50',
+      // デスクトップ: 常時表示
+      'hidden md:flex md:w-56',
+      // モバイル: mobileOpen のときだけ固定表示
+      mobileOpen && 'flex fixed inset-y-0 left-0 w-72',
+    )}>
       {/* ロゴ */}
-      <div className="px-6 py-5 border-b border-border">
+      <div className="flex items-center justify-between px-6 py-5 border-b border-border">
         <div className="text-xs font-bold tracking-[0.18em] uppercase text-foreground">
           Kingdom
         </div>
+        {mobileOpen && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded p-1 hover:bg-muted md:hidden"
+            aria-label="メニューを閉じる"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="border-b border-border px-4 py-4">
@@ -125,6 +142,7 @@ export function Sidebar() {
           <Link
             key={href}
             href={href}
+            onClick={onClose}
             className={cn(
               'flex items-center gap-3 px-5 py-2.5 text-sm border-l-2 transition-colors',
               pathname === href

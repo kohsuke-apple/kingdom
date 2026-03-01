@@ -6,7 +6,7 @@ export default async function ExtCaCandidatesPage() {
   const candidates = await recruitingRepository.listCandidates()
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="mx-auto max-w-6xl p-4 md:p-8">
       <div className="mb-6 border-b border-border pb-5">
         <h1 className="text-2xl font-bold">候補者（自分の候補者のみ表示）</h1>
       </div>

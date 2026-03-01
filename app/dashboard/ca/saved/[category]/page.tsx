@@ -29,7 +29,7 @@ export default async function CaSavedCategoryPage({
   const latestDate = entries.reduce((m, x) => x.createdAt > m ? x.createdAt : m, '')
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="mx-auto max-w-6xl p-4 md:p-8">
       {/* パンくず */}
       <Link
         href="/dashboard/ca/saved"

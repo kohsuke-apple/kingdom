@@ -5,7 +5,7 @@ export default async function ExtCaJobsPage() {
   const jobs = await recruitingRepository.listJobs()
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <div className="mx-auto max-w-6xl p-4 md:p-8">
       <div className="mb-6 border-b border-border pb-5">
         <h1 className="text-2xl font-bold">求人一覧（閲覧のみ）</h1>
       </div>
