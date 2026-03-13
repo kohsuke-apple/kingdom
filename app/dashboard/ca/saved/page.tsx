@@ -4,11 +4,18 @@ import { CaSavedListsView } from '@/components/ca-saved-lists-view'
 export const dynamic = 'force-dynamic'
 
 export default async function CaSavedPage() {
-  const [savedJobs, jobs, companies] = await Promise.all([
-    recruitingRepository.listSavedJobs(),
-    recruitingRepository.listJobs(),
-    recruitingRepository.listCompanies(),
-  ])
+  let savedJobs: Awaited<ReturnType<typeof recruitingRepository.listSavedJobs>> = []
+  let jobs: Awaited<ReturnType<typeof recruitingRepository.listJobs>> = []
+  let companies: Awaited<ReturnType<typeof recruitingRepository.listCompanies>> = []
+  try {
+    ;[savedJobs, jobs, companies] = await Promise.all([
+      recruitingRepository.listSavedJobs(),
+      recruitingRepository.listJobs(),
+      recruitingRepository.listCompanies(),
+    ])
+  } catch {
+    // Supabase 停止中またはネットワーク障害時は空リストで表示を継続
+  }
 
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-8">

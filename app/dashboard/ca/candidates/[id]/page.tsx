@@ -11,10 +11,16 @@ type Props = {
 export default async function CandidateDetailPage({ params }: Props) {
   const { id } = await params
 
-  const [candidate, agents] = await Promise.all([
-    recruitingRepository.getCandidate(id),
-    recruitingRepository.listAgents(),
-  ])
+  let candidate: Awaited<ReturnType<typeof recruitingRepository.getCandidate>> = null
+  let agents: Awaited<ReturnType<typeof recruitingRepository.listAgents>> = []
+  try {
+    ;[candidate, agents] = await Promise.all([
+      recruitingRepository.getCandidate(id),
+      recruitingRepository.listAgents(),
+    ])
+  } catch {
+    return notFound()
+  }
 
   if (!candidate) {
     notFound()

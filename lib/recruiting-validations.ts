@@ -33,8 +33,13 @@ export const agentSchema = z.object({
   companyId: z.string().uuid().optional().or(z.literal('')),
   name: z.string().min(1).max(120),
   email: z.string().email().optional().or(z.literal('')),
+  phone: optionalString(30),
+  career: optionalString(2000),
+  mainArea: z.enum(['sales', 'engineer', 'other']).optional(),
+  contactTool: optionalString(200),
   roleType: z.enum(['CA', 'RA', 'both']).default('both'),
   memo: optionalString(3000),
+  royalPartnerCompanyId: z.string().uuid().optional().or(z.literal('')),
   createdBy: z.string().uuid().optional(),
 })
 

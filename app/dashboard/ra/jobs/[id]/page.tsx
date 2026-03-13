@@ -11,10 +11,22 @@ type Props = {
 export default async function RaJobDetailPage({ params }: Props) {
   const { id } = await params
 
-  const job = await recruitingRepository.getJob(id)
-  if (!job) notFound()
+  let job: Awaited<ReturnType<typeof recruitingRepository.getJob>> = null
+  try {
+    job = await recruitingRepository.getJob(id)
+  } catch {
+    return notFound()
+  }
+  if (!job) return notFound()
 
-  const company = job.companyId ? await recruitingRepository.getCompany(job.companyId) : null
+  let company: Awaited<ReturnType<typeof recruitingRepository.getCompany>> = null
+  try {
+    if (job.companyId) {
+      company = await recruitingRepository.getCompany(job.companyId)
+    }
+  } catch {
+    // Supabase 停止中またはネットワーク障害時は会社情報なしで表示を継続
+  }
 
   return <RaJobDetailForm job={job} company={company} />
 }

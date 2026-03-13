@@ -1,7 +1,8 @@
-'use client'
+"use client"
 
 import { useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu } from 'lucide-react'
+import Image from 'next/image'
 import { Sidebar } from './sidebar'
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -33,7 +34,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <span className="ml-3 text-sm font-bold tracking-[0.18em] uppercase">Kingdom</span>
+          <div className="ml-3 flex items-center gap-2">
+            <Image src="/logo.svg" alt="dealerAGENT" width={96} height={24} className="h-6 w-auto" unoptimized />
+            <span className="text-sm font-bold tracking-[0.18em] uppercase">dealerAGENT</span>
+          </div>
         </header>
 
         <main className="flex-1 overflow-y-auto bg-[#FAFAFA]">

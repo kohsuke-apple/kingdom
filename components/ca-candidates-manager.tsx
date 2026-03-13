@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Plus, Search, SlidersHorizontal, Ellipsis } from 'lucide-react'
+import { Plus, Search, SlidersHorizontal, Ellipsis, Copy, ChevronDown } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
 import type { Candidate } from '@/types/recruiting'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,11 @@ function truncate(text?: string, max = 16) {
   if (!text) return '入力する'
   return text.length > max ? `${text.slice(0, max)}...` : text
 }
+
+const CANDIDATE_TEMPLATES: { label: string; query: string }[] = [
+  { label: 'SaaS 営業経験者', query: 'template=saas_sales' },
+  { label: 'エンジニア', query: 'template=engineer' },
+]
 
 export function CaCandidatesManager({
   initialCandidates,
@@ -74,12 +80,32 @@ export function CaCandidatesManager({
       </div>
 
       <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
-        <Link href="/dashboard/ca/candidates/new">
-          <Button className="h-12 gap-2 px-6 text-base">
-            <Plus className="h-5 w-5" />
-            求職者登録
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/ca/candidates/new">
+            <Button className="h-12 gap-2 px-6 text-base">
+              <Plus className="h-5 w-5" />
+              求職者登録
+            </Button>
+          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="h-12 gap-2 px-4">
+                テンプレートから登録
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {CANDIDATE_TEMPLATES.map(tpl => (
+                <DropdownMenuItem
+                  key={tpl.label}
+                  onSelect={() => router.push(`/dashboard/ca/candidates/new?${tpl.query}`)}
+                >
+                  {tpl.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground">担当者:</span>
@@ -166,6 +192,15 @@ export function CaCandidatesManager({
                 <td className="px-4 py-4 align-top">{formatDate(candidate.updatedAt)}</td>
                 <td className="px-4 py-4 align-top">
                   <div className="flex items-center justify-end gap-1">
+                    <button
+                      type="button"
+                      className="rounded px-2 py-1 hover:bg-muted inline-flex items-center"
+                      aria-label="複製"
+                      title="複製して新規登録"
+                      onClick={() => router.push(`/dashboard/ca/candidates/new?clone=${candidate.id}`)}
+                    >
+                      <Copy className="h-5 w-5" />
+                    </button>
                     <Link href={`/dashboard/ca/candidates/${candidate.id}`} className="rounded px-2 py-1 hover:bg-muted">
                       <Ellipsis className="h-5 w-5" />
                     </Link>

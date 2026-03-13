@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Toaster } from '@/components/ui/sonner'
-import { DashboardShell } from '@/components/dashboard-shell'
 import { ModeProvider } from '@/components/mode-context'
 
 const geistSans = Geist({
@@ -16,8 +15,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Kingdom - Private Database',
-  description: 'Personal relationship database',
+  title: 'dealerAGENT - Private Database',
+  description: 'dealerAGENT - Personal relationship database',
   robots: {
     index: false,
     follow: false,
@@ -42,9 +41,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         <ModeProvider>
-          <DashboardShell>
-            {children}
-          </DashboardShell>
+          {children}
         </ModeProvider>
         <Toaster />
       </body>

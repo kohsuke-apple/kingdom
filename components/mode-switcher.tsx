@@ -15,6 +15,14 @@ export function ModeSwitcher() {
       <div className="flex items-center gap-2">
         <Button
           type="button"
+          variant={mode === 'ALL' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setMode('ALL')}
+        >
+          全体モード
+        </Button>
+        <Button
+          type="button"
           variant={mode === 'CA' ? 'default' : 'outline'}
           size="sm"
           onClick={() => setMode('CA')}
@@ -35,7 +43,7 @@ export function ModeSwitcher() {
           { href: '/dashboard/ra/home', label: 'RA Home' },
           { href: '/dashboard/ra/companies', label: '企業' },
           { href: '/dashboard/ra/jobs', label: '求人' },
-          { href: '/dashboard/ra/selections', label: '選考' },
+          { href: '/dashboard/selections', label: '選考' },
           { href: '/dashboard/ra/agents', label: 'エージェント' },
           { href: '/dashboard/ra/templates', label: 'テンプレート' },
           { href: '/dashboard/ra/tasks', label: 'タスク' },
@@ -43,7 +51,7 @@ export function ModeSwitcher() {
           { href: '/dashboard/ca/candidates', label: '候補者' },
           { href: '/dashboard/ca/jobs-search', label: '求人検索' },
           { href: '/dashboard/ca/saved', label: '保存求人' },
-          { href: '/dashboard/ca/selections', label: '進捗' },
+          { href: '/dashboard/ca/selections', label: '選考' },
           { href: '/dashboard/ca/templates', label: 'CAテンプレート' },
         ].map(item => (
           <Link

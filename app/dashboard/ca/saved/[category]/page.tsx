@@ -14,11 +14,18 @@ export default async function CaSavedCategoryPage({
   const category = decodeURIComponent(params.category)
   if (!category) return notFound()
 
-  const [savedJobs, jobs, companies] = await Promise.all([
-    recruitingRepository.listSavedJobs(),
-    recruitingRepository.listJobs(),
-    recruitingRepository.listCompanies(),
-  ])
+  let savedJobs: Awaited<ReturnType<typeof recruitingRepository.listSavedJobs>> = []
+  let jobs: Awaited<ReturnType<typeof recruitingRepository.listJobs>> = []
+  let companies: Awaited<ReturnType<typeof recruitingRepository.listCompanies>> = []
+  try {
+    ;[savedJobs, jobs, companies] = await Promise.all([
+      recruitingRepository.listSavedJobs(),
+      recruitingRepository.listJobs(),
+      recruitingRepository.listCompanies(),
+    ])
+  } catch {
+    // Supabase 停止中またはネットワーク障害時は空リストで表示を継続
+  }
 
   const jobMap     = new Map(jobs.map(j => [j.id, j]))
   const companyMap = new Map(companies.map(c => [c.id, c.name]))

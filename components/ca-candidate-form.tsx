@@ -22,6 +22,7 @@ type WorkHistoryEntry = {
 type Props = {
   candidate?: Candidate
   agents?: Agent[]
+  prefill?: Partial<Omit<Candidate, 'id' | 'createdAt' | 'updatedAt'>>
 }
 
 const EMPLOYMENT_TYPES = ['正社員', '契約社員', '派遣社員', 'パート・アルバイト', '業務委託', 'その他']
@@ -36,53 +37,56 @@ function SectionCard({ title, children }: { title: string; children: React.React
   )
 }
 
-export function CaCandidateForm({ candidate, agents = [] }: Props) {
+export function CaCandidateForm({ candidate, agents = [], prefill }: Props) {
   const router = useRouter()
   const isEdit = !!candidate
   const formKey = candidate?.id ?? 'new'
 
+  // prefill は複製 / テンプレートから作成時に渡される
+  const init = candidate ?? prefill ?? {}
+
   // 基本情報
-  const [name, setName] = useState(candidate?.name ?? '')
-  const [nameKana, setNameKana] = useState(candidate?.nameKana ?? '')
-  const [email, setEmail] = useState(candidate?.email ?? '')
-  const [phone, setPhone] = useState(candidate?.phone ?? '')
-  const [gender, setGender] = useState(candidate?.gender ?? '')
-  const [birthDate, setBirthDate] = useState(candidate?.birthDate ?? '')
-  const [location, setLocation] = useState(candidate?.location ?? '')
+  const [name, setName] = useState((init as Partial<Candidate>).name ?? '')
+  const [nameKana, setNameKana] = useState((init as Partial<Candidate>).nameKana ?? '')
+  const [email, setEmail] = useState((init as Partial<Candidate>).email ?? '')
+  const [phone, setPhone] = useState((init as Partial<Candidate>).phone ?? '')
+  const [gender, setGender] = useState((init as Partial<Candidate>).gender ?? '')
+  const [birthDate, setBirthDate] = useState((init as Partial<Candidate>).birthDate ?? '')
+  const [location, setLocation] = useState((init as Partial<Candidate>).location ?? '')
 
   // 経歴
-  const [lastEducation, setLastEducation] = useState(candidate?.lastEducation ?? '')
-  const [graduatedSchool, setGraduatedSchool] = useState(candidate?.graduatedSchool ?? '')
-  const [experienceCount, setExperienceCount] = useState(candidate?.experienceCount?.toString() ?? '')
-  const [experienceJobTypes, setExperienceJobTypes] = useState(candidate?.experienceJobTypes ?? '')
-  const [experienceIndustries, setExperienceIndustries] = useState(candidate?.experienceIndustries ?? '')
-  const [currentSalary, setCurrentSalary] = useState(candidate?.currentSalary?.toString() ?? '')
+  const [lastEducation, setLastEducation] = useState((init as Partial<Candidate>).lastEducation ?? '')
+  const [graduatedSchool, setGraduatedSchool] = useState((init as Partial<Candidate>).graduatedSchool ?? '')
+  const [experienceCount, setExperienceCount] = useState((init as Partial<Candidate>).experienceCount?.toString() ?? '')
+  const [experienceJobTypes, setExperienceJobTypes] = useState((init as Partial<Candidate>).experienceJobTypes ?? '')
+  const [experienceIndustries, setExperienceIndustries] = useState((init as Partial<Candidate>).experienceIndustries ?? '')
+  const [currentSalary, setCurrentSalary] = useState((init as Partial<Candidate>).currentSalary?.toString() ?? '')
 
   // 就業履歴
   const [workHistories, setWorkHistories] = useState<WorkHistoryEntry[]>(
-    candidate?.workHistories?.map((wh: WorkHistory) => ({
+    ((init as Partial<Candidate>).workHistories ?? []).map((wh: WorkHistory) => ({
       companyName: wh.companyName ?? '',
       employmentType: wh.employmentType ?? '',
       period: wh.period ?? '',
       industry: wh.industry ?? '',
       jobType: wh.jobType ?? '',
       salary: wh.salary?.toString() ?? '',
-    })) ?? [],
+    })),
   )
 
   // 希望条件
-  const [desiredLocation, setDesiredLocation] = useState(candidate?.desiredLocation ?? '')
-  const [desiredSalary, setDesiredSalary] = useState(candidate?.desiredSalary?.toString() ?? '')
+  const [desiredLocation, setDesiredLocation] = useState((init as Partial<Candidate>).desiredLocation ?? '')
+  const [desiredSalary, setDesiredSalary] = useState((init as Partial<Candidate>).desiredSalary?.toString() ?? '')
 
   // 推薦用情報
-  const [recommendationText, setRecommendationText] = useState(candidate?.recommendationText ?? '')
-  const [resumeUrl, setResumeUrl] = useState(candidate?.resumeUrl ?? '')
-  const [cvUrl, setCvUrl] = useState(candidate?.cvUrl ?? '')
+  const [recommendationText, setRecommendationText] = useState((init as Partial<Candidate>).recommendationText ?? '')
+  const [resumeUrl, setResumeUrl] = useState((init as Partial<Candidate>).resumeUrl ?? '')
+  const [cvUrl, setCvUrl] = useState((init as Partial<Candidate>).cvUrl ?? '')
 
   // 自社管理用情報
-  const [mainAgentId, setMainAgentId] = useState(candidate?.mainAgentId ?? '')
-  const [subAgentId, setSubAgentId] = useState(candidate?.subAgentId ?? '')
-  const [memo, setMemo] = useState(candidate?.memo ?? '')
+  const [mainAgentId, setMainAgentId] = useState((init as Partial<Candidate>).mainAgentId ?? '')
+  const [subAgentId, setSubAgentId] = useState((init as Partial<Candidate>).subAgentId ?? '')
+  const [memo, setMemo] = useState((init as Partial<Candidate>).memo ?? '')
 
   const [loading, setLoading] = useState(false)
 

@@ -1,13 +1,11 @@
-import { recruitingRepository } from '@/lib/recruiting-repository'
-import RaAgentsManager from '@/components/ra-agents-manager'
+import AgentsManagement from '@/components/agents-management'
 
 export const dynamic = 'force-dynamic'
 
-export default async function RaAgentsPage() {
-  const agents = await recruitingRepository.listAgents()
+export default function RaAgentsPage() {
   return (
     <div className="mx-auto max-w-5xl p-4 md:p-8">
-      <RaAgentsManager initialAgents={agents} />
+      <AgentsManagement roleFilter="RA" selectionScope="ra" />
     </div>
   )
 }

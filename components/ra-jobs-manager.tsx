@@ -1,9 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Plus, Search, SlidersHorizontal, Ellipsis, X, LayoutGrid, List, Building2, Briefcase, Banknote, Star, BookmarkPlus, ImagePlus, Loader2, UserPlus } from 'lucide-react'
+import { Plus, Search, SlidersHorizontal, Ellipsis, X, LayoutGrid, List, Building2, Briefcase, Banknote, Star, BookmarkPlus, ImagePlus, Loader2, UserPlus, Copy, ChevronDown, Megaphone } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { CandidateSelector } from './candidate-selector'
 import { toast } from 'sonner'
 import { useMode } from './mode-context'
@@ -39,6 +41,33 @@ const emptyForm = (defaultCompanyId = ''): JobFormState => ({
   status: 'open',
   description: '',
 })
+
+type JobTemplateData = Omit<JobFormState, 'id' | 'companyId'>
+
+const JOB_TEMPLATES: { label: string; data: JobTemplateData }[] = [
+  {
+    label: 'SaaS 営業',
+    data: {
+      title: 'SaaS 営業（インサイドセールス / フィールドセールス）',
+      jobType: '正社員',
+      salaryMin: '400',
+      salaryMax: '700',
+      status: 'open',
+      description: '<h3>仕事内容</h3><p>SaaS プロダクトの新規顧客開拓・既存顧客へのアップセルを担当していただきます。</p><h3>必須条件</h3><ul><li>営業経験 1 年以上</li></ul><h3>歓迎条件</h3><ul><li>SaaS / IT 業界での営業経験</li><li>CRM ツール（Salesforce 等）の使用経験</li></ul>',
+    },
+  },
+  {
+    label: 'エンジニア',
+    data: {
+      title: 'ソフトウェアエンジニア（バックエンド / フルスタック）',
+      jobType: '正社員',
+      salaryMin: '500',
+      salaryMax: '900',
+      status: 'open',
+      description: '<h3>仕事内容</h3><p>プロダクト開発チームの一員として、バックエンド API 設計・開発を担当していただきます。</p><h3>必須条件</h3><ul><li>サーバーサイド開発経験 2 年以上</li></ul><h3>歓迎条件</h3><ul><li>TypeScript / Go / Python のいずれか</li><li>クラウド（AWS / GCP）の実務経験</li></ul>',
+    },
+  },
+]
 
 function SourceBadge({ mode }: { mode?: string }) {
   if (mode === 'RA') {
@@ -77,6 +106,7 @@ export function RaJobsManager({
   const [selectorJob, setSelectorJob] = useState<{ jobId: string; companyId: string } | null>(null)
   const { mode } = useMode()
   const router = useRouter()
+  // Announcement modal is not implemented yet
 
   const companyNameMap = useMemo(() => {
     const map = new Map<string, string>()
@@ -84,8 +114,25 @@ export function RaJobsManager({
     return map
   }, [companies])
 
-  function openNew() {
-    setForm(emptyForm(companies[0]?.id ?? ''))
+  function openNew(prefill?: Partial<JobTemplateData>) {
+    setForm({ ...emptyForm(companies[0]?.id ?? ''), ...prefill })
+    setFormKey(k => k + 1)
+    setThumbnailFile(null)
+    setThumbnailPreview(null)
+    setModalOpen(true)
+  }
+
+  function openDuplicate(job: Job) {
+    setForm({
+      companyId: job.companyId,
+      title: `${job.title}（複製）`,
+      jobType: job.jobType ?? '',
+      salaryMin: job.salaryMin?.toString() ?? '',
+      salaryMax: job.salaryMax?.toString() ?? '',
+      status: job.status,
+      description: job.description ?? '',
+      thumbnailUrl: undefined,
+    })
     setFormKey(k => k + 1)
     setThumbnailFile(null)
     setThumbnailPreview(null)
@@ -253,11 +300,13 @@ export function RaJobsManager({
                   {/* プレビュー */}
                   <div className="flex h-24 w-32 shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-input bg-muted/30">
                     {thumbnailPreview ?? form.thumbnailUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={thumbnailPreview ?? form.thumbnailUrl}
+                      <Image
+                        src={thumbnailPreview ?? form.thumbnailUrl ?? ''}
                         alt="サムネイルプレビュー"
                         className="h-full w-full object-cover"
+                        width={320}
+                        height={240}
+                        unoptimized
                       />
                     ) : (
                       <ImagePlus className="h-7 w-7 text-muted-foreground/50" />
@@ -323,10 +372,31 @@ export function RaJobsManager({
         </div>
 
         <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
-          <Button className="h-12 gap-2 px-6 text-base" onClick={openNew}>
-            <Plus className="h-5 w-5" />
-            求人追加
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button className="h-12 gap-2 px-6 text-base" onClick={() => openNew()}>
+              <Plus className="h-5 w-5" />
+              求人追加
+            </Button>
+            <Button variant="outline" className="h-12 gap-2 px-4" onClick={() => alert('告知文作成は未実装です')}>
+              <Megaphone className="h-5 w-5" />
+              告知文作成
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-12 gap-2 px-4">
+                  テンプレートから追加
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {JOB_TEMPLATES.map(tpl => (
+                  <DropdownMenuItem key={tpl.label} onSelect={() => openNew(tpl.data)}>
+                    {tpl.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">状態:</span>
             <select className="h-10 min-w-40 rounded-md border border-input bg-white px-3 text-sm" value={statusFilter} onChange={e => setStatusFilter(e.target.value as typeof statusFilter)}>
@@ -376,11 +446,13 @@ export function RaJobsManager({
                 <div key={job.id} className="relative flex flex-col rounded-xl border border-border bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                   {/* サムネイル */}
                   {job.thumbnailUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={job.thumbnailUrl}
                       alt={job.title}
                       className="h-36 w-full object-cover"
+                      width={640}
+                      height={360}
+                      unoptimized
                     />
                   ) : (
                     <div className="flex h-20 items-center justify-center bg-muted/30">
@@ -480,6 +552,14 @@ export function RaJobsManager({
                       >
                         詳細
                       </Link>
+                      <button
+                        type="button"
+                        className="rounded p-1.5 hover:bg-muted"
+                        title="複製"
+                        onClick={() => openDuplicate(job)}
+                      >
+                        <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                      </button>
                       {job.sourceMode === 'RA' && (
                         <button
                           type="button"
@@ -547,6 +627,9 @@ export function RaJobsManager({
                               <UserPlus className="h-5 w-5" />
                             </button>
                           )}
+                          <button type="button" className="rounded px-2 py-1 hover:bg-muted inline-flex items-center" aria-label="複製" title="複製" onClick={() => openDuplicate(job)}>
+                            <Copy className="h-5 w-5" />
+                          </button>
                           <Link href={`/dashboard/ra/jobs/${job.id}`} className="rounded px-2 py-1 hover:bg-muted inline-flex items-center" aria-label="詳細">
                             <Ellipsis className="h-5 w-5" />
                           </Link>

@@ -12,10 +12,16 @@ export const dynamic = 'force-dynamic'
 export default async function CompanyDetailPage({ params }: Props) {
   const { id } = await params
 
-  const [company, jobs] = await Promise.all([
-    recruitingRepository.getCompany(id),
-    recruitingRepository.listJobs({ companyId: id }),
-  ])
+  let company: Awaited<ReturnType<typeof recruitingRepository.getCompany>> = null
+  let jobs: Awaited<ReturnType<typeof recruitingRepository.listJobs>> = []
+  try {
+    ;[company, jobs] = await Promise.all([
+      recruitingRepository.getCompany(id),
+      recruitingRepository.listJobs({ companyId: id }),
+    ])
+  } catch {
+    return notFound()
+  }
 
   if (!company) notFound()
 

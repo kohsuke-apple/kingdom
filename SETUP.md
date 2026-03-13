@@ -1,4 +1,4 @@
-# Kingdom - セットアップ・デプロイ手順
+# dealerAGENT - セットアップ・デプロイ手順
 
 ## ローカル開発
 
@@ -59,7 +59,7 @@ npm run dev
 git init
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/your-username/kingdom.git
+git remote add origin https://github.com/your-username/dealerAGENT.git
 git push -u origin main
 ```
 
@@ -76,7 +76,7 @@ git push -u origin main
 
 4. 「Deploy」をクリック
 
-> **⚠️ 重要**: SQLiteのデータファイル (`/data/kingdom.db`) はVercelの一時ファイルシステム上に保存されます。
+> **⚠️ 重要**: SQLiteのデータファイル (`/data/dealeragent.db`) はVercelの一時ファイルシステム上に保存されます。
 > デプロイのたびにデータがリセットされます。
 > **本番運用では Supabase (PostgreSQL) への移行を推奨します。**
 

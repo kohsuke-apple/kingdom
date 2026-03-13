@@ -1,5 +1,5 @@
 export type UserRole = 'CA' | 'RA'
-export type AgentRoleType = 'CA' | 'RA' | 'both'
+export type AgentRoleType = 'CA' | 'RA' | 'both' | 'EMPLOYEE' | 'MANAGER' | 'CONTRACTOR' | 'OTHER'
 export type JobStatus = 'open' | 'closed'
 export type TaskStatus = 'todo' | 'doing' | 'done'
 export type PublishStatus = 'private' | 'ra_only' | 'ca_ra' | 'published'
@@ -190,6 +190,11 @@ export interface Agent {
   companyId?: string
   name: string
   email?: string
+  phone?: string
+  career?: string
+  mainArea?: 'sales' | 'engineer' | 'other'
+  contactTool?: string
+  royalPartnerCompanyId?: string
   roleType: AgentRoleType
   memo?: string
   createdBy?: string

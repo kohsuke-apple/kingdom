@@ -4,11 +4,18 @@ import { recruitingRepository } from '@/lib/recruiting-repository'
 export const dynamic = 'force-dynamic'
 
 export default async function CaJobsSearchPage() {
-  const [jobs, companies, savedJobs] = await Promise.all([
-    recruitingRepository.listJobs({ status: 'open' }),
-    recruitingRepository.listCompanies(),
-    recruitingRepository.listSavedJobs(),
-  ])
+  let jobs: Awaited<ReturnType<typeof recruitingRepository.listJobs>> = []
+  let companies: Awaited<ReturnType<typeof recruitingRepository.listCompanies>> = []
+  let savedJobs: Awaited<ReturnType<typeof recruitingRepository.listSavedJobs>> = []
+  try {
+    ;[jobs, companies, savedJobs] = await Promise.all([
+      recruitingRepository.listJobs({ status: 'open' }),
+      recruitingRepository.listCompanies(),
+      recruitingRepository.listSavedJobs(),
+    ])
+  } catch {
+    // Supabase 停止中またはネットワーク障害時は空リストで表示を継続
+  }
 
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-8">

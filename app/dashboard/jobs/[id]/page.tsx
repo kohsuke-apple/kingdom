@@ -46,16 +46,23 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   }
   if (!job) return notFound()
 
-  const [company, selections, allCandidates] = await Promise.all([
-    recruitingRepository.getCompany(job.companyId),
-    recruitingRepository.listSelectionsForJob(id),
-    recruitingRepository.listCandidates(),
-  ])
+  let company: Awaited<ReturnType<typeof recruitingRepository.getCompany>> = null
+  let selections: Awaited<ReturnType<typeof recruitingRepository.listSelectionsForJob>> = []
+  let allCandidates: Awaited<ReturnType<typeof recruitingRepository.listCandidates>> = []
+  try {
+    ;[company, selections, allCandidates] = await Promise.all([
+      recruitingRepository.getCompany(job.companyId),
+      recruitingRepository.listSelectionsForJob(id),
+      recruitingRepository.listCandidates(),
+    ])
+  } catch {
+    // Supabase 停止中またはネットワーク障害時は空データで表示を継続
+  }
 
   const candidateMap = new Map(allCandidates.map(c => [c.id, c]))
 
   return (
-    <div className="mx-auto max-w-5xl p-4 md:p-8">
+    <div className="mx-auto max-w-5xl p-8">
       {/* ヘッダー */}
       <div className="mb-8 border-b border-border pb-6">
         <div className="flex items-start justify-between gap-4">

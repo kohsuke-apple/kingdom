@@ -3,7 +3,12 @@ import Link from 'next/link'
 
 export default async function ExtCaCandidatesPage() {
   // NOTE: placeholder — later restrict to "my candidates" / permitted ones
-  const candidates = await recruitingRepository.listCandidates()
+  let candidates: Awaited<ReturnType<typeof recruitingRepository.listCandidates>> = []
+  try {
+    candidates = await recruitingRepository.listCandidates()
+  } catch {
+    // Supabase 停止中またはネットワーク障害時は空リストで表示を継続
+  }
 
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-8">

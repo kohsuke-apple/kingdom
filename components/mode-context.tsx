@@ -17,7 +17,7 @@ export function ModeProvider({ children }: { children: React.ReactNode }) {
 
   const setMode = useCallback((nextMode: Mode) => {
     setModeState(nextMode)
-    localStorage.setItem('kingdom-mode', nextMode)
+    localStorage.setItem('dealeragent-mode', nextMode)
   }, [])
 
   const toggleMode = useCallback(() => {

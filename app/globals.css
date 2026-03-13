@@ -148,3 +148,84 @@
 .rich-text-content em {
   font-style: italic;
 }
+
+/* ── Doc body typography ─────────────────────────────────────────────── */
+.doc-body h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111827;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+.doc-body h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.doc-body p {
+  color: #374151;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+.doc-body ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: #374151;
+  line-height: 1.8;
+}
+.doc-body ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: #374151;
+  line-height: 1.8;
+}
+.doc-body li {
+  margin-bottom: 0.25rem;
+}
+.doc-body strong {
+  font-weight: 700;
+  color: #111827;
+}
+.doc-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+.doc-body table th {
+  background: #f9fafb;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-weight: 700;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+.doc-body table td {
+  padding: 0.5rem 0.75rem;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+.doc-body table tr:nth-child(even) td {
+  background: #fafafa;
+}
+.doc-callout {
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
+  border-radius: 0 6px 6px 0;
+  padding: 0.75rem 1rem;
+  margin: 1.25rem 0;
+  font-size: 0.875rem;
+  color: #1e40af;
+  line-height: 1.7;
+}
+.doc-callout strong {
+  font-weight: 700;
+  color: #1e3a8a;
+}

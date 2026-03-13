@@ -58,6 +58,11 @@ type AgentRow = {
   company_id: string | null
   name: string
   email: string | null
+  phone: string | null
+  career: string | null
+  main_area: string | null
+  contact_tool: string | null
+  royal_partner_company_id: string | null
   role_type: Agent['roleType']
   memo: string | null
   created_by: string | null
@@ -259,6 +264,11 @@ const toAgent = (row: AgentRow): Agent => ({
   companyId: row.company_id ?? undefined,
   name: row.name,
   email: row.email ?? undefined,
+  phone: row.phone ?? undefined,
+  career: row.career ?? undefined,
+  mainArea: (row.main_area as Agent['mainArea']) ?? undefined,
+  contactTool: row.contact_tool ?? undefined,
+  royalPartnerCompanyId: row.royal_partner_company_id ?? undefined,
   roleType: row.role_type,
   memo: row.memo ?? undefined,
   createdBy: row.created_by ?? undefined,
@@ -522,6 +532,11 @@ export const recruitingRepository = {
         company_id: input.companyId ?? null,
         name: input.name,
         email: input.email ?? null,
+        phone: input.phone ?? null,
+        career: input.career ?? null,
+        main_area: input.mainArea ?? null,
+        contact_tool: input.contactTool ?? null,
+        royal_partner_company_id: input.royalPartnerCompanyId ?? null,
         role_type: input.roleType,
         memo: input.memo ?? null,
         created_by: input.createdBy ?? null,
@@ -555,6 +570,11 @@ export const recruitingRepository = {
     if (input.companyId !== undefined) payload.company_id = input.companyId ?? null
     if (input.name !== undefined) payload.name = input.name
     if (input.email !== undefined) payload.email = input.email ?? null
+    if (input.phone !== undefined) payload.phone = input.phone ?? null
+    if (input.career !== undefined) payload.career = input.career ?? null
+    if (input.mainArea !== undefined) payload.main_area = input.mainArea ?? null
+    if (input.contactTool !== undefined) payload.contact_tool = input.contactTool ?? null
+    if (input.royalPartnerCompanyId !== undefined) payload.royal_partner_company_id = input.royalPartnerCompanyId ?? null
     if (input.roleType !== undefined) payload.role_type = input.roleType
     if (input.memo !== undefined) payload.memo = input.memo ?? null
 

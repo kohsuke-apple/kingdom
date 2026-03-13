@@ -2,7 +2,12 @@ import { recruitingRepository } from '@/lib/recruiting-repository'
 import Link from 'next/link'
 
 export default async function ExtCaJobsPage() {
-  const jobs = await recruitingRepository.listJobs()
+  let jobs: Awaited<ReturnType<typeof recruitingRepository.listJobs>> = []
+  try {
+    jobs = await recruitingRepository.listJobs()
+  } catch {
+    // Supabase 停止中またはネットワーク障害時は空リストで表示を継続
+  }
 
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-8">
