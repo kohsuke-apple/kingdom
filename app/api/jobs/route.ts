@@ -165,7 +165,9 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(job)
   } catch (error) {
     console.error('PUT /api/jobs error:', error)
-    return NextResponse.json({ error: 'サーバーエラー' }, { status: 500 })
+    // Return error message in development for easier debugging
+    const message = error instanceof Error ? error.message : 'サーバーエラー'
+    return NextResponse.json({ error: 'サーバーエラー', message }, { status: 500 })
   }
 }
 

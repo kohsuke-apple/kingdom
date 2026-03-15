@@ -131,6 +131,7 @@ export interface WorkHistory {
   industry?: string
   jobType?: string
   salary?: number
+  managementExperience?: string
 }
 
 export interface Candidate {
@@ -149,7 +150,9 @@ export interface Candidate {
   experienceIndustries?: string
   currentSalary?: number
   workHistories?: WorkHistory[]
+  careerAxes?: string[]
   desiredLocation?: string
+  desiredIndustry?: string
   desiredSalary?: number
   desiredJobType?: string
   recommendationText?: string
@@ -157,6 +160,7 @@ export interface Candidate {
   cvUrl?: string
   mainAgentId?: string
   subAgentId?: string
+  subAgentIds?: string[]
   memo?: string
   createdBy?: string
   createdAt: string
@@ -263,3 +267,61 @@ export type AgentInput = Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>
 export type TaskInput = Omit<Task, 'id' | 'createdAt' | 'updatedAt'>
 export type MessageTemplateInput = Omit<MessageTemplate, 'id' | 'createdAt'>
 export type CompanyCommunicationInput = Omit<CompanyCommunication, 'id' | 'createdAt' | 'updatedAt'>
+
+// ── 契約企業管理 ────────────────────────────────────────────────────────
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled'
+
+export interface ContractCompany {
+  id: string
+  name: string
+  plan?: string
+  contractStartDate?: string
+  contractEndDate?: string
+  contactName?: string
+  contactEmail?: string
+  memo?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ContractTodo {
+  id: string
+  contractCompanyId: string
+  title: string
+  dueDate?: string
+  isCompleted: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ContractInvoice {
+  id: string
+  contractCompanyId: string
+  invoiceNumber?: string
+  amount?: number
+  issuedDate?: string
+  dueDate?: string
+  status: InvoiceStatus
+  memo?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type ContractCompanyInput = Omit<ContractCompany, 'id' | 'createdAt' | 'updatedAt'>
+export type ContractTodoInput = Omit<ContractTodo, 'id' | 'createdAt' | 'updatedAt'>
+export type ContractInvoiceInput = Omit<ContractInvoice, 'id' | 'createdAt' | 'updatedAt'>
+
+// ── 求職者自己入力フォーム ─────────────────────────────────────────────
+export type CandidateFormStatus = 'pending' | 'submitted'
+
+export interface CandidateForm {
+  id: string
+  token: string
+  agentId?: string
+  label?: string
+  candidateId?: string
+  status: CandidateFormStatus
+  expiresAt?: string
+  createdAt: string
+  updatedAt: string
+}

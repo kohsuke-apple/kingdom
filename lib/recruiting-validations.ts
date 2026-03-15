@@ -123,6 +123,7 @@ export const workHistorySchema = z.object({
   industry: optionalString(100),
   jobType: optionalString(100),
   salary: z.number().int().nonnegative().optional(),
+  managementExperience: optionalString(200),
 })
 
 export const candidateSchema = z.object({
@@ -140,7 +141,9 @@ export const candidateSchema = z.object({
   experienceIndustries: optionalString(500),
   currentSalary: z.number().int().nonnegative().optional(),
   workHistories: z.array(workHistorySchema).optional(),
+  careerAxes: z.array(z.string().max(200)).max(5).optional(),
   desiredLocation: optionalString(200),
+  desiredIndustry: optionalString(200),
   desiredSalary: z.number().int().nonnegative().optional(),
   desiredJobType: optionalString(100),
   recommendationText: optionalString(10000),
@@ -148,6 +151,7 @@ export const candidateSchema = z.object({
   cvUrl: optionalString(1000),
   mainAgentId: optionalString(200),
   subAgentId: optionalString(200),
+  subAgentIds: z.array(z.string()).optional(),
   memo: optionalString(4000),
   createdBy: z.string().uuid().optional(),
 })

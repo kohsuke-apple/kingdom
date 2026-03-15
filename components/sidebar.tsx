@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Building2, BriefcaseBusiness, ClipboardList, FileText, ListChecks, Settings, Users, UserCog, Bookmark, X, ChevronDown, Check } from 'lucide-react'
+import { LayoutDashboard, Building2, BriefcaseBusiness, ClipboardList, FileText, ListChecks, Settings, Users, UserCog, Bookmark, X, ChevronDown, Check, BookOpen, Handshake } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useMode } from '@/components/mode-context'
@@ -27,17 +27,18 @@ const modeHomeMap: Record<Mode, string> = {
 }
 
 const allNavItems = [
-  { href: '/', label: '全体ダッシュボード', icon: LayoutDashboard },
+  { href: '/dashboard', label: '全体ダッシュボード', icon: LayoutDashboard },
   { href: '/dashboard/all/ca', label: 'CA管理', icon: Users },
+  { href: '/dashboard/all/ra', label: 'RA管理', icon: Users },
   { href: '/dashboard/selections', label: '選考管理', icon: ClipboardList },
   { href: '/dashboard/all/management', label: 'メンバー管理', icon: Users },
+  { href: '/dashboard/all/contract-companies', label: '契約企業管理', icon: Handshake },
   { href: '/dashboard/company-settings', label: '会社設定', icon: Settings },
 ]
 
 const raNavItems = [
   { href: '/dashboard/ra/home', label: 'RAホーム', icon: LayoutDashboard },
   { href: '/dashboard/ra/companies', label: '企業管理', icon: Building2 },
-  { href: '/dashboard/ra/agents', label: 'エージェント管理', icon: Users },
   { href: '/dashboard/ra/jobs', label: '求人管理', icon: BriefcaseBusiness },
   { href: '/dashboard/selections', label: '選考管理', icon: ClipboardList },
   { href: '/dashboard/ra/templates', label: 'テンプレート', icon: FileText },
@@ -47,6 +48,7 @@ const raNavItems = [
 const caNavItems = [
   { href: '/dashboard/ca/home', label: 'CAホーム', icon: LayoutDashboard },
   { href: '/dashboard/ca/candidates', label: '候補者管理', icon: Users },
+  { href: '/dashboard/ca/forms', label: '求職者フォーム', icon: FileText },
   { href: '/dashboard/ca/jobs-search', label: '求人検索', icon: BriefcaseBusiness },
   { href: '/dashboard/ca/saved', label: '保存求人', icon: Bookmark },
   { href: '/dashboard/ca/selections', label: '選考管理', icon: ClipboardList },
@@ -154,7 +156,14 @@ export function Sidebar({ mobileOpen = false, onClose }: { mobileOpen?: boolean;
       </nav>
 
       {/* フッター */}
-      <div className="px-5 py-4 border-t border-border">
+      <div className="px-5 py-4 border-t border-border space-y-3">
+        <Link
+          href="/docs"
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <BookOpen className="h-3.5 w-3.5 shrink-0" />
+          ドキュメント
+        </Link>
         <p className="text-[10px] text-muted-foreground uppercase tracking-[0.15em]">
           Private Access Only
         </p>

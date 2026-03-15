@@ -115,7 +115,6 @@ export default function AgentsManagement({ roleFilter = 'CA', selectionScope = '
           companyId: royalPartnerCompanyId || undefined,
           royalPartnerCompanyId: royalPartnerCompanyId || undefined,
           roleType: roleFilter === 'all' ? 'both' : roleFilter,
-          createdBy: 'system',
         }),
       })
       if (res.ok) {
@@ -136,7 +135,7 @@ export default function AgentsManagement({ roleFilter = 'CA', selectionScope = '
     }
   }
 
-  const visibleAgents = agents.filter(a => (roleFilter === 'all' ? true : a.roleType === roleFilter || a.roleType === 'both'))
+  const visibleAgents = agents.filter(a => (roleFilter === 'all' ? true : a.roleType === roleFilter))
 
   return (
     <div>

@@ -42,6 +42,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Supabase（ローカル開発の一時ファイルのみ除外。migrations/ はgit管理する）
+supabase/.branches
+supabase/.temp
+supabase/.env
 supabase
 
 testtt

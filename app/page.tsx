@@ -56,6 +56,7 @@ export default async function HomePage() {
           <nav className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">機能</a>
             <a href="#faq" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">よくある質問</a>
+            <Link href="/docs" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">ドキュメント</Link>
           </nav>
 
           <div className="flex items-center gap-3">

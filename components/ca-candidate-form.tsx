@@ -17,6 +17,7 @@ type WorkHistoryEntry = {
   industry: string
   jobType: string
   salary: string
+  managementExperience?: string
 }
 
 type Props = {
@@ -71,8 +72,15 @@ export function CaCandidateForm({ candidate, agents = [], prefill }: Props) {
       industry: wh.industry ?? '',
       jobType: wh.jobType ?? '',
       salary: wh.salary?.toString() ?? '',
+      managementExperience: wh.managementExperience ?? '',
     })),
   )
+
+  // 転職軸（最大5）
+  const [careerAxes, setCareerAxes] = useState<string[]>((init as Partial<Candidate>).careerAxes ?? [])
+
+  // 希望業種
+  const [desiredIndustry, setDesiredIndustry] = useState((init as Partial<Candidate>).desiredIndustry ?? '')
 
   // 希望条件
   const [desiredLocation, setDesiredLocation] = useState((init as Partial<Candidate>).desiredLocation ?? '')
@@ -85,7 +93,10 @@ export function CaCandidateForm({ candidate, agents = [], prefill }: Props) {
 
   // 自社管理用情報
   const [mainAgentId, setMainAgentId] = useState((init as Partial<Candidate>).mainAgentId ?? '')
-  const [subAgentId, setSubAgentId] = useState((init as Partial<Candidate>).subAgentId ?? '')
+  const [subAgentIds, setSubAgentIds] = useState<string[]>(
+    ((init as Partial<Candidate>).subAgentIds as string[] | undefined) ??
+      (((init as Partial<Candidate>).subAgentId ? [(init as Partial<Candidate>).subAgentId as string] : []) as string[]),
+  )
   const [memo, setMemo] = useState((init as Partial<Candidate>).memo ?? '')
 
   const [loading, setLoading] = useState(false)
@@ -103,6 +114,30 @@ export function CaCandidateForm({ candidate, agents = [], prefill }: Props) {
 
   function updateWorkHistory(index: number, key: keyof WorkHistoryEntry, value: string) {
     setWorkHistories(prev => prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)))
+  }
+
+  function addCareerAxis() {
+    setCareerAxes(prev => (prev.length < 5 ? [...prev, ''] : prev))
+  }
+
+  function updateCareerAxis(index: number, value: string) {
+    setCareerAxes(prev => prev.map((v, i) => (i === index ? value : v)))
+  }
+
+  function removeCareerAxis(index: number) {
+    setCareerAxes(prev => prev.filter((_, i) => i !== index))
+  }
+
+  function addSubAgent() {
+    setSubAgentIds(prev => [...prev, ''])
+  }
+
+  function updateSubAgent(index: number, value: string) {
+    setSubAgentIds(prev => prev.map((v, i) => (i === index ? value : v)))
+  }
+
+  function removeSubAgent(index: number) {
+    setSubAgentIds(prev => prev.filter((_, i) => i !== index))
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -130,14 +165,16 @@ export function CaCandidateForm({ candidate, agents = [], prefill }: Props) {
         industry: wh.industry || undefined,
         jobType: wh.jobType || undefined,
         salary: wh.salary ? Number(wh.salary) : undefined,
+        managementExperience: wh.managementExperience || undefined,
       })),
       desiredLocation: desiredLocation || undefined,
+      desiredIndustry: desiredIndustry || undefined,
       desiredSalary: desiredSalary ? Number(desiredSalary) : undefined,
       recommendationText: recommendationText || undefined,
       resumeUrl: resumeUrl || undefined,
       cvUrl: cvUrl || undefined,
       mainAgentId: mainAgentId || undefined,
-      subAgentId: subAgentId || undefined,
+      subAgentIds: subAgentIds.length ? subAgentIds : undefined,
       memo: memo || undefined,
     }
 
@@ -409,6 +446,14 @@ export function CaCandidateForm({ candidate, agents = [], prefill }: Props) {
                   placeholder="例：450"
                 />
               </div>
+              <div className="space-y-1.5">
+                <Label>マネジメント経験</Label>
+                <Input
+                  value={wh.managementExperience ?? ''}
+                  onChange={e => updateWorkHistory(i, 'managementExperience', e.target.value)}
+                  placeholder="例：チームリーダー（5名）/ 部長として組織運営"
+                />
+              </div>
             </div>
           ))}
 
@@ -440,6 +485,32 @@ export function CaCandidateForm({ candidate, agents = [], prefill }: Props) {
                 onChange={e => setDesiredSalary(e.target.value)}
                 placeholder="例：600"
               />
+            </div>
+          </div>
+          <div className="space-y-1.5 mt-4">
+            <Label htmlFor="desiredIndustry">希望業種</Label>
+            <Input
+              id="desiredIndustry"
+              value={desiredIndustry}
+              onChange={e => setDesiredIndustry(e.target.value)}
+              placeholder="例：IT・サービス、金融など"
+            />
+          </div>
+
+          <div className="space-y-2 mt-4">
+            <Label>転職軸（最大5）</Label>
+            {careerAxes.map((axis, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <Input value={axis} onChange={e => updateCareerAxis(idx, e.target.value)} />
+                <button type="button" onClick={() => removeCareerAxis(idx)} className="text-destructive">
+                  削除
+                </button>
+              </div>
+            ))}
+            <div>
+              <Button type="button" size="sm" variant="outline" onClick={addCareerAxis} disabled={careerAxes.length >= 5}>
+                <Plus className="h-4 w-4 mr-1" /> 軸を追加
+              </Button>
             </div>
           </div>
         </SectionCard>
@@ -508,29 +579,35 @@ export function CaCandidateForm({ candidate, agents = [], prefill }: Props) {
               )}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="subAgentId">サブ担当者</Label>
-              {agents.length > 0 ? (
-                <select
-                  id="subAgentId"
-                  value={subAgentId}
-                  onChange={e => setSubAgentId(e.target.value)}
-                  className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm"
-                >
-                  <option value="">未選択</option>
-                  {agents.map(agent => (
-                    <option key={agent.id} value={agent.id}>
-                      {agent.name}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <Input
-                  id="subAgentId"
-                  value={subAgentId}
-                  onChange={e => setSubAgentId(e.target.value)}
-                  placeholder="担当者名を入力"
-                />
-              )}
+              <Label>サブ担当者（複数可）</Label>
+              {subAgentIds.map((id, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  {agents.length > 0 ? (
+                    <select
+                      value={id}
+                      onChange={e => updateSubAgent(idx, e.target.value)}
+                      className="h-10 w-full rounded-md border border-input bg-white px-3 text-sm"
+                    >
+                      <option value="">未選択</option>
+                      {agents.map(agent => (
+                        <option key={agent.id} value={agent.id}>
+                          {agent.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <Input value={id} onChange={e => updateSubAgent(idx, e.target.value)} placeholder="担当者名を入力" />
+                  )}
+                  <button type="button" onClick={() => removeSubAgent(idx)} className="text-destructive">
+                    削除
+                  </button>
+                </div>
+              ))}
+              <div>
+                <Button type="button" size="sm" variant="outline" onClick={addSubAgent}>
+                  <Plus className="h-4 w-4 mr-1" /> サブ担当者を追加
+                </Button>
+              </div>
             </div>
           </div>
 

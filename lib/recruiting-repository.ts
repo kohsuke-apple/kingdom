@@ -11,6 +11,13 @@ import type {
   CompanyCommunication,
   CompanyCommunicationInput,
   CompanyInput,
+  CandidateForm,
+  ContractCompany,
+  ContractCompanyInput,
+  ContractInvoice,
+  ContractInvoiceInput,
+  ContractTodo,
+  ContractTodoInput,
   Job,
   JobInput,
   MessageTemplate,
@@ -151,7 +158,9 @@ type CandidateRow = {
   experience_industries: string | null
   current_salary: number | null
   work_histories: WorkHistory[] | null
+  career_axes: string[] | null
   desired_location: string | null
+  desired_industry: string | null
   desired_salary: number | null
   desired_job_type: string | null
   recommendation_text: string | null
@@ -159,6 +168,7 @@ type CandidateRow = {
   cv_url: string | null
   main_agent_id: string | null
   sub_agent_id: string | null
+  sub_agent_ids: string[] | null
   memo: string | null
   created_by: string | null
   created_at: string
@@ -229,6 +239,102 @@ type SavedJobRow = {
   custom_category: string
   created_at: string
 }
+
+type ContractCompanyRow = {
+  id: string
+  name: string
+  plan: string | null
+  contract_start_date: string | null
+  contract_end_date: string | null
+  contact_name: string | null
+  contact_email: string | null
+  memo: string | null
+  created_at: string
+  updated_at: string
+}
+
+type ContractTodoRow = {
+  id: string
+  contract_company_id: string
+  title: string
+  due_date: string | null
+  is_completed: boolean
+  created_at: string
+  updated_at: string
+}
+
+type ContractInvoiceRow = {
+  id: string
+  contract_company_id: string
+  invoice_number: string | null
+  amount: number | null
+  issued_date: string | null
+  due_date: string | null
+  status: string
+  memo: string | null
+  created_at: string
+  updated_at: string
+}
+
+const toContractCompany = (row: ContractCompanyRow): ContractCompany => ({
+  id: row.id,
+  name: row.name,
+  plan: row.plan ?? undefined,
+  contractStartDate: row.contract_start_date ?? undefined,
+  contractEndDate: row.contract_end_date ?? undefined,
+  contactName: row.contact_name ?? undefined,
+  contactEmail: row.contact_email ?? undefined,
+  memo: row.memo ?? undefined,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+})
+
+const toContractTodo = (row: ContractTodoRow): ContractTodo => ({
+  id: row.id,
+  contractCompanyId: row.contract_company_id,
+  title: row.title,
+  dueDate: row.due_date ?? undefined,
+  isCompleted: row.is_completed,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+})
+
+const toContractInvoice = (row: ContractInvoiceRow): ContractInvoice => ({
+  id: row.id,
+  contractCompanyId: row.contract_company_id,
+  invoiceNumber: row.invoice_number ?? undefined,
+  amount: row.amount ?? undefined,
+  issuedDate: row.issued_date ?? undefined,
+  dueDate: row.due_date ?? undefined,
+  status: (row.status as ContractInvoice['status']) ?? 'draft',
+  memo: row.memo ?? undefined,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+})
+
+type CandidateFormRow = {
+  id: string
+  token: string
+  agent_id: string | null
+  label: string | null
+  candidate_id: string | null
+  status: string
+  expires_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+const toCandidateForm = (row: CandidateFormRow): CandidateForm => ({
+  id: row.id,
+  token: row.token,
+  agentId: row.agent_id ?? undefined,
+  label: row.label ?? undefined,
+  candidateId: row.candidate_id ?? undefined,
+  status: (row.status as CandidateForm['status']) ?? 'pending',
+  expiresAt: row.expires_at ?? undefined,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+})
 
 const toCompany = (row: CompanyRow): Company => ({
   id: row.id,
@@ -356,7 +462,9 @@ const toCandidate = (row: CandidateRow): Candidate => ({
   experienceIndustries: row.experience_industries ?? undefined,
   currentSalary: row.current_salary ?? undefined,
   workHistories: row.work_histories ?? undefined,
+  careerAxes: (row.career_axes as string[] | null) ?? undefined,
   desiredLocation: row.desired_location ?? undefined,
+  desiredIndustry: row.desired_industry ?? undefined,
   desiredSalary: row.desired_salary ?? undefined,
   desiredJobType: row.desired_job_type ?? undefined,
   recommendationText: row.recommendation_text ?? undefined,
@@ -364,6 +472,7 @@ const toCandidate = (row: CandidateRow): Candidate => ({
   cvUrl: row.cv_url ?? undefined,
   mainAgentId: row.main_agent_id ?? undefined,
   subAgentId: row.sub_agent_id ?? undefined,
+  subAgentIds: row.sub_agent_ids ?? undefined,
   memo: row.memo ?? undefined,
   createdBy: row.created_by ?? undefined,
   createdAt: row.created_at,
@@ -762,7 +871,9 @@ export const recruitingRepository = {
         experience_industries: input.experienceIndustries ?? null,
         current_salary: input.currentSalary ?? null,
         work_histories: input.workHistories ?? null,
+        career_axes: input.careerAxes ?? null,
         desired_location: input.desiredLocation ?? null,
+        desired_industry: input.desiredIndustry ?? null,
         desired_salary: input.desiredSalary ?? null,
         desired_job_type: input.desiredJobType ?? null,
         recommendation_text: input.recommendationText ?? null,
@@ -770,6 +881,7 @@ export const recruitingRepository = {
         cv_url: input.cvUrl ?? null,
         main_agent_id: input.mainAgentId ?? null,
         sub_agent_id: input.subAgentId ?? null,
+        sub_agent_ids: input.subAgentIds ?? null,
         memo: input.memo ?? null,
         created_by: input.createdBy ?? null,
       })
@@ -795,7 +907,9 @@ export const recruitingRepository = {
     if (input.experienceIndustries !== undefined) payload.experience_industries = input.experienceIndustries ?? null
     if (input.currentSalary !== undefined) payload.current_salary = input.currentSalary ?? null
     if (input.workHistories !== undefined) payload.work_histories = input.workHistories ?? null
+    if (input.careerAxes !== undefined) payload.career_axes = input.careerAxes ?? null
     if (input.desiredLocation !== undefined) payload.desired_location = input.desiredLocation ?? null
+    if (input.desiredIndustry !== undefined) payload.desired_industry = input.desiredIndustry ?? null
     if (input.desiredSalary !== undefined) payload.desired_salary = input.desiredSalary ?? null
     if (input.desiredJobType !== undefined) payload.desired_job_type = input.desiredJobType ?? null
     if (input.recommendationText !== undefined) payload.recommendation_text = input.recommendationText ?? null
@@ -803,6 +917,7 @@ export const recruitingRepository = {
     if (input.cvUrl !== undefined) payload.cv_url = input.cvUrl ?? null
     if (input.mainAgentId !== undefined) payload.main_agent_id = input.mainAgentId ?? null
     if (input.subAgentId !== undefined) payload.sub_agent_id = input.subAgentId ?? null
+    if (input.subAgentIds !== undefined) payload.sub_agent_ids = input.subAgentIds ?? null
     if (input.memo !== undefined) payload.memo = input.memo ?? null
 
     const { data, error } = await supabase.from('candidates').update(payload).eq('id', id).select().maybeSingle()
@@ -1117,6 +1232,217 @@ export const recruitingRepository = {
   async deleteSavedJob(id: string): Promise<boolean> {
     const { error, count } = await supabase
       .from('saved_jobs')
+      .delete({ count: 'exact' })
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    return (count ?? 0) > 0
+  },
+
+  // ── 契約企業 ──────────────────────────────────────────────────────────
+  async listContractCompanies(): Promise<ContractCompany[]> {
+    const { data, error } = await supabase
+      .from('contract_companies')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) throw new Error(error.message)
+    return (data ?? []).map(toContractCompany)
+  },
+
+  async createContractCompany(input: ContractCompanyInput): Promise<ContractCompany> {
+    const { data, error } = await supabase
+      .from('contract_companies')
+      .insert({
+        name: input.name,
+        plan: input.plan ?? null,
+        contract_start_date: input.contractStartDate ?? null,
+        contract_end_date: input.contractEndDate ?? null,
+        contact_name: input.contactName ?? null,
+        contact_email: input.contactEmail ?? null,
+        memo: input.memo ?? null,
+      })
+      .select()
+      .single()
+    if (error) throw new Error(error.message)
+    return toContractCompany(data)
+  },
+
+  async updateContractCompany(id: string, input: Partial<ContractCompanyInput>): Promise<ContractCompany | null> {
+    const payload: Record<string, unknown> = {}
+    if (input.name !== undefined) payload.name = input.name
+    if (input.plan !== undefined) payload.plan = input.plan ?? null
+    if (input.contractStartDate !== undefined) payload.contract_start_date = input.contractStartDate ?? null
+    if (input.contractEndDate !== undefined) payload.contract_end_date = input.contractEndDate ?? null
+    if (input.contactName !== undefined) payload.contact_name = input.contactName ?? null
+    if (input.contactEmail !== undefined) payload.contact_email = input.contactEmail ?? null
+    if (input.memo !== undefined) payload.memo = input.memo ?? null
+    const { data, error } = await supabase
+      .from('contract_companies')
+      .update(payload)
+      .eq('id', id)
+      .select()
+      .maybeSingle()
+    if (error) throw new Error(error.message)
+    return data ? toContractCompany(data) : null
+  },
+
+  async deleteContractCompany(id: string): Promise<boolean> {
+    const { error, count } = await supabase
+      .from('contract_companies')
+      .delete({ count: 'exact' })
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    return (count ?? 0) > 0
+  },
+
+  // ── 契約企業 TODO ──────────────────────────────────────────────────────
+  async listContractTodos(contractCompanyId?: string): Promise<ContractTodo[]> {
+    let query = supabase.from('contract_todos').select('*').order('created_at', { ascending: true })
+    if (contractCompanyId) query = query.eq('contract_company_id', contractCompanyId)
+    const { data, error } = await query
+    if (error) throw new Error(error.message)
+    return (data ?? []).map(toContractTodo)
+  },
+
+  async createContractTodo(input: ContractTodoInput): Promise<ContractTodo> {
+    const { data, error } = await supabase
+      .from('contract_todos')
+      .insert({
+        contract_company_id: input.contractCompanyId,
+        title: input.title,
+        due_date: input.dueDate ?? null,
+        is_completed: input.isCompleted ?? false,
+      })
+      .select()
+      .single()
+    if (error) throw new Error(error.message)
+    return toContractTodo(data)
+  },
+
+  async updateContractTodo(id: string, input: Partial<ContractTodoInput>): Promise<ContractTodo | null> {
+    const payload: Record<string, unknown> = {}
+    if (input.title !== undefined) payload.title = input.title
+    if (input.dueDate !== undefined) payload.due_date = input.dueDate ?? null
+    if (input.isCompleted !== undefined) payload.is_completed = input.isCompleted
+    const { data, error } = await supabase
+      .from('contract_todos')
+      .update(payload)
+      .eq('id', id)
+      .select()
+      .maybeSingle()
+    if (error) throw new Error(error.message)
+    return data ? toContractTodo(data) : null
+  },
+
+  async deleteContractTodo(id: string): Promise<boolean> {
+    const { error, count } = await supabase
+      .from('contract_todos')
+      .delete({ count: 'exact' })
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    return (count ?? 0) > 0
+  },
+
+  // ── 請求書 ──────────────────────────────────────────────────────────
+  async listContractInvoices(contractCompanyId?: string): Promise<ContractInvoice[]> {
+    let query = supabase.from('contract_invoices').select('*').order('issued_date', { ascending: false })
+    if (contractCompanyId) query = query.eq('contract_company_id', contractCompanyId)
+    const { data, error } = await query
+    if (error) throw new Error(error.message)
+    return (data ?? []).map(toContractInvoice)
+  },
+
+  async createContractInvoice(input: ContractInvoiceInput): Promise<ContractInvoice> {
+    const { data, error } = await supabase
+      .from('contract_invoices')
+      .insert({
+        contract_company_id: input.contractCompanyId,
+        invoice_number: input.invoiceNumber ?? null,
+        amount: input.amount ?? null,
+        issued_date: input.issuedDate ?? null,
+        due_date: input.dueDate ?? null,
+        status: input.status ?? 'draft',
+        memo: input.memo ?? null,
+      })
+      .select()
+      .single()
+    if (error) throw new Error(error.message)
+    return toContractInvoice(data)
+  },
+
+  async updateContractInvoice(id: string, input: Partial<ContractInvoiceInput>): Promise<ContractInvoice | null> {
+    const payload: Record<string, unknown> = {}
+    if (input.invoiceNumber !== undefined) payload.invoice_number = input.invoiceNumber ?? null
+    if (input.amount !== undefined) payload.amount = input.amount ?? null
+    if (input.issuedDate !== undefined) payload.issued_date = input.issuedDate ?? null
+    if (input.dueDate !== undefined) payload.due_date = input.dueDate ?? null
+    if (input.status !== undefined) payload.status = input.status
+    if (input.memo !== undefined) payload.memo = input.memo ?? null
+    const { data, error } = await supabase
+      .from('contract_invoices')
+      .update(payload)
+      .eq('id', id)
+      .select()
+      .maybeSingle()
+    if (error) throw new Error(error.message)
+    return data ? toContractInvoice(data) : null
+  },
+
+  async deleteContractInvoice(id: string): Promise<boolean> {
+    const { error, count } = await supabase
+      .from('contract_invoices')
+      .delete({ count: 'exact' })
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    return (count ?? 0) > 0
+  },
+
+  // ── 求職者自己入力フォーム ────────────────────────────────────────────
+  async listCandidateForms(agentId?: string): Promise<CandidateForm[]> {
+    let q = supabase.from('candidate_forms').select('*').order('created_at', { ascending: false })
+    if (agentId) q = q.eq('agent_id', agentId)
+    const { data, error } = await q
+    if (error) throw new Error(error.message)
+    return (data ?? []).map(toCandidateForm)
+  },
+
+  async getCandidateFormByToken(token: string): Promise<CandidateForm | null> {
+    const { data, error } = await supabase
+      .from('candidate_forms')
+      .select('*')
+      .eq('token', token)
+      .maybeSingle()
+    if (error) throw new Error(error.message)
+    return data ? toCandidateForm(data) : null
+  },
+
+  async createCandidateForm(input: { agentId?: string; label?: string; expiresAt?: string }): Promise<CandidateForm> {
+    const { data, error } = await supabase
+      .from('candidate_forms')
+      .insert({
+        agent_id: input.agentId ?? null,
+        label: input.label ?? null,
+        expires_at: input.expiresAt ?? null,
+      })
+      .select()
+      .single()
+    if (error) throw new Error(error.message)
+    return toCandidateForm(data)
+  },
+
+  async submitCandidateForm(token: string, candidateId: string): Promise<CandidateForm | null> {
+    const { data, error } = await supabase
+      .from('candidate_forms')
+      .update({ status: 'submitted', candidate_id: candidateId })
+      .eq('token', token)
+      .select()
+      .maybeSingle()
+    if (error) throw new Error(error.message)
+    return data ? toCandidateForm(data) : null
+  },
+
+  async deleteCandidateForm(id: string): Promise<boolean> {
+    const { error, count } = await supabase
+      .from('candidate_forms')
       .delete({ count: 'exact' })
       .eq('id', id)
     if (error) throw new Error(error.message)
